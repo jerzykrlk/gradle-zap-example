@@ -1,0 +1,40 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'com.patdouble.zap' version '2.11.0'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:3.0.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+zapConfig {
+    applicationUrl = "https://example.com"
+}
+
+task zapSetup(dependsOn: [zapStart]) {
+    doLast {
+        zapConfig.api {
+            project.ext.contextId = context.newContext(project.name).value
+            context.includeInContext(project.name, "\\Q${zapConfig.applicationUrl.get()}\\E.*")
+        }
+    }
+}
+
+zapSpider.dependsOn zapSetup
+zapAjaxSpider.dependsOn zapSetup
+zapActiveScan.dependsOn zapSetup
+zapStop.mustRunAfter zapSetup
