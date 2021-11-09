@@ -22,7 +22,7 @@ test {
 }
 
 zapConfig {
-    applicationUrl = "http://example.com"
+    applicationUrl = "https://example.com"
 }
 
 task zapSetup(dependsOn: [zapStart]) {
